@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as ActionCable from 'actioncable';
+import * as ActionCable from '@rails/actioncable';
 import {Broadcaster} from './broadcaster';
 import {isNullOrUndefined, isUndefined} from 'util';
 
