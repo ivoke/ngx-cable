@@ -1,14 +1,10 @@
-import {Injectable} from '@angular/core';
-import * as ActionCable from '@rails/actioncable';
-import {Broadcaster} from './broadcaster';
-import {isNullOrUndefined, isUndefined} from 'util';
+import { Injectable } from "@angular/core";
+import * as ActionCable from "@rails/actioncable";
+import { Broadcaster } from "./broadcaster";
 
 @Injectable()
 export class NgXCable {
-  constructor(
-    private broadcaster: Broadcaster
-  ) {
-  };
+  constructor(private broadcaster: Broadcaster) {}
 
   public setCable = function (url: string): void {
     this.cable = ActionCable.createConsumer(url);
@@ -19,42 +15,43 @@ export class NgXCable {
   };
 
   public isOpen = function () {
-    if (!isUndefined(this.cable)) {
+    if (this.cable !== void 0) {
       return !this.cable.connection.disconnected;
     } else {
       return false;
     }
   };
 
-  public create = function (params: { channel: string, room: string }) {
+  public create = function (params: { channel: string; room: string }) {
     let _this = this;
 
     return this.cable.subscriptions.create(params, {
       received: function (data: any) {
         _this.broadcaster.broadcast(params.channel, data);
-      }
+      },
     });
   };
 
-  public subscribe = function (params: { channel: string, room: string }) {
+  public subscribe = function (params: { channel: string; room: string }) {
     return this.create(params);
   };
 
-  public send = function (data: any, subscriptions?: ActionCable.Subscription[]) {
+  public send = function (
+    data: any,
+    subscriptions?: ActionCable.Subscription[]
+  ) {
     if (!this.isOpen()) {
       return false;
     }
 
-    if (isNullOrUndefined(subscriptions)) {
+    if (subscriptions == null) {
       this.cable.subscriptions.subscriptions[0].send(data);
     } else if (subscriptions instanceof Array) {
-      subscriptions.forEach(
-        function (subscription) {
-          if (subscription instanceof ActionCable.Subscription) {
-            subscription.send(data);
-          }
+      subscriptions.forEach(function (subscription) {
+        if (subscription instanceof ActionCable.Subscription) {
+          subscription.send(data);
         }
-      );
+      });
     } else {
       return false;
     }
@@ -62,21 +59,23 @@ export class NgXCable {
     return true;
   };
 
-  public perform = function (action: string, data: any, subscriptions?: ActionCable.Subscription[]) {
+  public perform = function (
+    action: string,
+    data: any,
+    subscriptions?: ActionCable.Subscription[]
+  ) {
     if (!this.isOpen()) {
       return false;
     }
 
-    if (isNullOrUndefined(subscriptions)) {
+    if (subscriptions == null) {
       this.cable.subscriptions.subscriptions[0].perform(action, data);
     } else if (subscriptions instanceof Array) {
-      subscriptions.forEach(
-        function (subscription) {
-          if (subscription instanceof ActionCable.Subscription) {
-            subscription.perform(action, data);
-          }
+      subscriptions.forEach(function (subscription) {
+        if (subscription instanceof ActionCable.Subscription) {
+          subscription.perform(action, data);
         }
-      );
+      });
     } else {
       return false;
     }
@@ -87,20 +86,16 @@ export class NgXCable {
   public unsubscribe = function (subscriptions?: ActionCable.Subscription[]) {
     let _this = this;
 
-    if (isNullOrUndefined(subscriptions)) {
-      this.cable.subscriptions.subscriptions.forEach(
-        function (subscription) {
+    if (subscriptions == null) {
+      this.cable.subscriptions.subscriptions.forEach(function (subscription) {
+        _this.cable.subscriptions.remove(subscription);
+      });
+    } else if (subscriptions instanceof Array) {
+      subscriptions.forEach(function (subscription) {
+        if (subscription instanceof ActionCable.Subscription) {
           _this.cable.subscriptions.remove(subscription);
         }
-      );
-    } else if (subscriptions instanceof Array) {
-      subscriptions.forEach(
-        function (subscription) {
-          if (subscription instanceof ActionCable.Subscription) {
-            _this.cable.subscriptions.remove(subscription);
-          }
-        }
-      );
+      });
     } else {
       return false;
     }
@@ -116,18 +111,16 @@ export class NgXCable {
     return this.getSubscriptions().length;
   };
 
-  public searchSubcriptions = function (id, field = 'room') {
+  public searchSubcriptions = function (id, field = "room") {
     let rsub = [];
 
-    this.getSubscriptions().forEach(
-      function (subscription) {
-        const msg = JSON.parse(subscription.identifier);
+    this.getSubscriptions().forEach(function (subscription) {
+      const msg = JSON.parse(subscription.identifier);
 
-        if (id === msg[field]) {
-          rsub.push(subscription);
-        }
+      if (id === msg[field]) {
+        rsub.push(subscription);
       }
-    );
+    });
 
     return rsub;
   };
