@@ -21,10 +21,10 @@ export class Broadcaster {
   public on(key) {
     return this._eventBus.asObservable().pipe(
       filter(function (event) {
-        return event.key === key;
+        return event[`key`] === key;
       }),
       map(function (event) {
-        return event.data;
+        return event[`data`];
       })
     );
   }
