@@ -2,18 +2,49 @@
   "name": "ngx-cable",
   "version": "1.2.9",
   "description": "ngx-cable",
-  "main": "index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./broadcaster": {
+      "types": "./dist/broadcaster.d.ts",
+      "default": "./dist/broadcaster.js"
+    },
+    "./ngx-cable": {
+      "types": "./dist/ngx-cable.d.ts",
+      "default": "./dist/ngx-cable.js"
+    },
+    "./ngx-cable.module": {
+      "types": "./dist/ngx-cable.module.d.ts",
+      "default": "./dist/ngx-cable.module.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "ngc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "test": "test"
   },
   "author": "Maxim Tyulenev",
   "license": "MIT",
   "peerDependencies": {
+    "@angular/core": ">=2.4.10",
     "@rails/actioncable": ">=6.0.3-4",
     "rxjs": ">=5.0.1",
     "rxjs-compat": ">=6.0.0",
-    "@angular/core": ">=2.4.10",
     "zone.js": ">=0.7.2"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "20.3.9",
+    "@angular/core": "20.3.9",
+    "@rails/actioncable": "^6.1.710",
+    "rxjs": "^7.8.2",
+    "typescript": "5.8.2"
   },
   "repository": {
     "type": "git",
